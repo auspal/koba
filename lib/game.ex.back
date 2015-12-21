@@ -1,0 +1,18 @@
+defmodule Cards.Game do
+  use Supervisor
+
+  @registered_name CardsGame
+
+  def start_link do
+    Supervisor.start_link(__MODULE__, :no_args, [name: @registered_name])
+  end
+
+  def init(:no_args) do
+    children = [
+      worker(Cards.Deck, id: :deck),
+      worker(Cards.Player, id: :player)
+    ]
+    supervise(children, strategy: :one_for_one)
+  end
+
+end

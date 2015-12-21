@@ -1,0 +1,4 @@
+Cards.Player.show_private_state(:player1)
+Cards.Player.draw(:player1, 1)
+Cards.Player.discard(:player1, 2)
+Cards.Player.show_private_state(:player1)
