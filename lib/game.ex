@@ -38,7 +38,7 @@ defmodule Cards.Game do
       player
     end
     {:ok, round} = Cards.Round.start_link(deck, players)
-    Cards.Round.begin_next_round(:round)
+    Cards.Round.begin_next_round
     {:ok, %{deck: deck, players: players, round: round}}
   end
 

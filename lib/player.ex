@@ -4,6 +4,7 @@ defmodule Cards.Player do
   def start_link(name) do
     name = String.to_atom(name)
     GenServer.start_link(__MODULE__, name, name: name)
+    {:ok, name}
   end
 
   # Client API
@@ -40,9 +41,19 @@ defmodule Cards.Player do
     finish_turn(player, :true)
   end
 
+  def fight(player) do
+    Cards.Round.bet_koman
+    GenServer.call(player, :bet_koman)
+    finish_turn(player, :true)
+  end
+
+  def pass(player) do
+    finish_turn(player, :true)
+  end
+
   defp finish_turn(player, true_false) do
     GenServer.call(player, {:finish_turn, true_false})
-    next_player = Cards.Round.next_turn
+    Cards.Round.next_turn
   end
 
   def get_state(player) do
@@ -73,10 +84,13 @@ defmodule Cards.Player do
   end
 
   def handle_call({:discard, card_name}, _, state) do
-    IO.inspect(state.hand)
     discard = Enum.find(state.hand, fn card -> card == card_name end)
     new_hand = Enum.filter(state.hand, fn(card) -> discard != card end)
     {:reply, discard, %{state | hand: new_hand, discard: discard}}
+  end
+
+  def handle_call(:bet_koman, _, state) do
+    {:reply, :ok, %{state | koman: state.koman-1}}
   end
 
   def handle_call({:finish_turn, true_false}, _, state) do
