@@ -4,6 +4,7 @@ defmodule Cards do
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
+    :random.seed({1450, 803972, 974245}) # for testing purposes
     import Supervisor.Spec, warn: false
 
     children = [

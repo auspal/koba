@@ -15,13 +15,16 @@ defmodule Cards.Game do
 
     IO.puts "Game State:"
     Cards.Round.show_state(:round)
+    deck_cards = Cards.Deck.show_deck
+    IO.write "     deck: "
+    IO.inspect(deck_cards)
     IO.puts "     kobayakawa: #{Cards.Card.get_value(deck_state.kobayakawa)}"
     for player <- game_state.players do
-      Cards.Player.show_public_state(player)
+      Cards.Player.show_private_state(player)
     end
   end
 
-  def game_state do
+  def get_state do
     GenServer.call(CardsGame, :state)
   end
 

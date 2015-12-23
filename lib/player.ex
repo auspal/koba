@@ -29,7 +29,7 @@ defmodule Cards.Player do
   end
 
   def discard(player, card_name) do
-    card_name = String.to_atom(card_name)
+    #card_name = String.to_atom(card_name)
     discard = GenServer.call(player, {:discard, card_name})
     finish_turn(player, :true)
     discard

@@ -15,10 +15,6 @@ defmodule Cards.Deck do
     GenServer.call(deck, :replace_kobayakawa)
   end
 
-  def shuffle(deck) do
-    GenServer.call(deck, :shuffle)
-  end
-
   def show_deck do
     GenServer.call(:deck, :show)
   end
@@ -34,19 +30,13 @@ defmodule Cards.Deck do
       {:ok, card} = Cards.Card.start_link("card#{value}")
       card
     end
-    :random.seed(:os.timestamp)
+    #:random.seed(:os.timestamp) # removed to provide consistent test values
     [kobayakawa | remaining] = Enum.shuffle(cards)
     {:ok, %{kobayakawa: kobayakawa, cards: remaining}}
   end
 
   def handle_call(:show, _, deck) do
-    {:reply, card_values(deck), deck}
-  end
-
-  def handle_call(:shuffle, _, deck) do
-    :random.seed(:os.timestamp)
-    cards = Enum.shuffle(deck.cards)
-    {:reply, card_values(cards), %{deck | cards: cards}}
+    {:reply, card_values(deck.cards), deck}
   end
 
   def handle_call({:draw, count}, _, deck) do
