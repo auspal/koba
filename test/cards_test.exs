@@ -22,6 +22,7 @@ defmodule CardsTest do
     game_state = Cards.Game.get_state
     Enum.each(game_state.players, &perform_draw_phase(&1))
     Enum.each(game_state.players, &perform_fight_phase(&1))
+    Cards.Round.end_round
   end
 
   def perform_draw_phase(player) do

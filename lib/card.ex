@@ -1,8 +1,8 @@
 defmodule Cards.Card do
 
-  def start_link(name) do
-    name = String.to_atom(name)
-    Agent.start_link(fn -> name end, [name: name])
+  def start_link(value) do
+    name = String.to_atom("card#{value}")
+    Agent.start_link(fn -> value end, [name: name])
     {:ok, name}
   end
 

@@ -19,6 +19,10 @@ defmodule Cards.Deck do
     GenServer.call(:deck, :show)
   end
 
+  def show_kobayakawa do
+    GenServer.call(:deck, :show_kobayakawa)
+  end
+
   def get_state(deck) do
     GenServer.call(deck, :state)
   end
@@ -27,7 +31,7 @@ defmodule Cards.Deck do
 
   def init(:no_args) do
     cards = for value <- 1..15, into: [] do
-      {:ok, card} = Cards.Card.start_link("card#{value}")
+      {:ok, card} = Cards.Card.start_link(value)
       card
     end
     #:random.seed(:os.timestamp) # removed to provide consistent test values
@@ -37,6 +41,10 @@ defmodule Cards.Deck do
 
   def handle_call(:show, _, deck) do
     {:reply, card_values(deck.cards), deck}
+  end
+
+  def handle_call(:show_kobayakawa, _, deck) do
+    {:reply, deck.kobayakawa, deck}
   end
 
   def handle_call({:draw, count}, _, deck) do

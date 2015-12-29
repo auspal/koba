@@ -16,7 +16,7 @@ defmodule Cards.Game do
     IO.puts "Game State:"
     Cards.Round.show_state(:round)
     deck_cards = Cards.Deck.show_deck
-    IO.write "     deck: "
+    IO.write "           deck: "
     IO.inspect(deck_cards)
     IO.puts "     kobayakawa: #{Cards.Card.get_value(deck_state.kobayakawa)}"
     for player <- game_state.players do
@@ -26,6 +26,10 @@ defmodule Cards.Game do
 
   def get_state do
     GenServer.call(CardsGame, :state)
+  end
+
+  def reset_deck do
+    Cards.Deck
   end
 
   # Server callbacks
@@ -38,7 +42,6 @@ defmodule Cards.Game do
       player
     end
     {:ok, round} = Cards.Round.start_link(deck, players)
-    Cards.Round.begin_next_round
     {:ok, %{deck: deck, players: players, round: round}}
   end
 

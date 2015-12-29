@@ -12,7 +12,7 @@ defmodule Cards.Player do
   def show_public_state(player) do
     player_state = GenServer.call(player, :state)
     IO.puts "#{player_state.name}:"
-    IO.puts "   koman: #{player_state.koman}"
+    IO.puts "   kamon: #{player_state.kamon}"
     IO.puts " discard: #{card_values(player_state.discard)}"
   end
 
@@ -20,9 +20,10 @@ defmodule Cards.Player do
     player_state = GenServer.call(player, :state)
     cards = GenServer.call(player, :show_hand)
     IO.puts "#{player_state.name}:"
-    IO.puts "   koman: #{player_state.koman}"
-    IO.puts "    hand: #{card_values(cards)}"
-    IO.puts " discard: #{card_values(player_state.discard)}"
+    IO.puts "    kamon: #{player_state.kamon}"
+    IO.puts "kamon bet: #{player_state.kamon_bet}"
+    IO.puts "     hand: #{card_values(cards)}"
+    IO.puts "  discard: #{card_values(player_state.discard)}"
   end
 
   def draw(player, count) do
@@ -42,8 +43,8 @@ defmodule Cards.Player do
   end
 
   def fight(player) do
-    Cards.Round.bet_koman
-    GenServer.call(player, :bet_koman)
+    Cards.Round.bet_kamon
+    GenServer.call(player, :bet_kamon)
     finish_turn(player, :true)
   end
 
@@ -54,6 +55,10 @@ defmodule Cards.Player do
   defp finish_turn(player, true_false) do
     GenServer.call(player, {:finish_turn, true_false})
     Cards.Round.next_turn
+  end
+
+  def take_kamons(player, kamon_count) do
+    GenServer.call(player, {:take_kamons, kamon_count})
   end
 
   def get_state(player) do
@@ -67,7 +72,7 @@ defmodule Cards.Player do
   # Server callbacks
 
   def init(name) do
-    {:ok, %{name: name, koman: 4, hand: [], discard: nil, turn_finished: :false}}
+    {:ok, %{name: name, kamon: 4, kamon_bet: 0, hand: [], discard: nil, turn_finished: :false}}
   end
 
   def handle_call(:state, _, state) do
@@ -89,8 +94,13 @@ defmodule Cards.Player do
     {:reply, discard, %{state | hand: new_hand, discard: discard}}
   end
 
-  def handle_call(:bet_koman, _, state) do
-    {:reply, :ok, %{state | koman: state.koman-1}}
+  def handle_call(:bet_kamon, _, state) do
+    {:reply, :ok, %{state | kamon: state.kamon-1, kamon_bet: state.kamon_bet+1}}
+  end
+
+  def handle_call({:take_kamons, count}, _, state) do
+    new_kamon_count = count + state.kamon
+    {:reply, new_kamon_count, %{state | kamon: new_kamon_count}}
   end
 
   def handle_call({:finish_turn, true_false}, _, state) do
