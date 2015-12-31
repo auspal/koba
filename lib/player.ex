@@ -9,29 +9,11 @@ defmodule Cards.Player do
 
   # Client API
 
-  def show_public_state(player) do
-    player_state = GenServer.call(player, :state)
-    IO.puts "#{player_state.name}:"
-    IO.puts "   kamon: #{player_state.kamon}"
-    IO.puts " discard: #{card_values(player_state.discard)}"
-  end
-
-  def show_private_state(player) do
-    player_state = GenServer.call(player, :state)
-    cards = GenServer.call(player, :show_hand)
-    IO.puts "#{String.upcase(Atom.to_string(player_state.name))}:"
-    IO.puts "    kamon: #{player_state.kamon}"
-    IO.puts "kamon bet: #{player_state.kamon_bet}"
-    IO.puts "     hand: #{card_values(cards)}"
-    IO.puts "  discard: #{card_values(player_state.discard)}"
-  end
-
   def draw(player, count) do
     GenServer.call(player, {:draw, count})
   end
 
   def discard(player, card_name) do
-    #card_name = String.to_atom(card_name)
     discard = GenServer.call(player, {:discard, card_name})
     finish_turn(player, :true)
     discard
@@ -115,15 +97,15 @@ defmodule Cards.Player do
     {:reply, :ok, %{state | kamon_bet: 0, hand: [], discard: nil, turn_finished: :false}}
   end
 
-  defp card_values(nil), do: ""
-  defp card_values(card) when is_atom(card) do 
+  def card_values(nil), do: ""
+  def card_values(card) when is_atom(card) do 
     Cards.Card.get_value(card)
   end
-  defp card_values(cards) when is_list(cards) do
+  def card_values(cards) when is_list(cards) do
     Enum.map(cards, fn card -> Cards.Card.get_value(card) end)
     |> Enum.join(",")
   end
-  defp card_values(card) when is_pid(card) do
+  def card_values(card) when is_pid(card) do
     Cards.Card.get_value(card) |> Integer.to_string
   end
 

@@ -10,17 +10,32 @@ defmodule Cards.Game do
   # Client API
 
   def show_state do
-    game_state = GenServer.call(CardsGame, :state)
-    deck_state = GenServer.call(:deck, :state)
-
     IO.puts "\nGAME STATE:"
-    Cards.Round.show_state(:round)
+
+    # round state
+    round_state = GenServer.call(:round, :state)
+    IO.puts "          round: #{round_state.round}"
+    IO.puts "     kamons bet: #{round_state.bet_kamons}"
+    player_state = GenServer.call(round_state.current_player, :state)
+    IO.puts " current player: #{player_state.name}"
+
+    # deck state
     deck_cards = Cards.Deck.show_deck
     IO.write "           deck: "
     IO.inspect(deck_cards)
+    deck_state = GenServer.call(:deck, :state)
     IO.puts "     kobayakawa: #{Cards.Card.get_value(deck_state.kobayakawa)}"
+
+    # players state
+    game_state = GenServer.call(CardsGame, :state)
     for player <- game_state.players do
-      Cards.Player.show_private_state(player)
+      player_state = GenServer.call(player, :state)
+      cards = GenServer.call(player, :show_hand)
+      IO.puts "#{String.upcase(Atom.to_string(player_state.name))}:"
+      IO.puts "    kamon: #{player_state.kamon}"
+      IO.puts "kamon bet: #{player_state.kamon_bet}"
+      IO.puts "     hand: #{Cards.Player.card_values(cards)}"
+      IO.puts "  discard: #{Cards.Player.card_values(player_state.discard)}"
     end
   end
 

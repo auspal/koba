@@ -13,11 +13,30 @@ defmodule CardsTest do
     deck_state = GenServer.call(:deck, :state)
     assert Enum.count(deck_state.cards) == 6
 
-    Enum.each(2..7, fn -> 
-      Cards.Round.start_next_round
-      perform_round
-      Cards.Game.show_state
-    end)
+    Cards.Round.start_next_round
+    perform_round
+    Cards.Game.show_state
+
+    Cards.Round.start_next_round
+    perform_round
+    Cards.Game.show_state
+
+    Cards.Round.start_next_round
+    perform_round
+    Cards.Game.show_state
+
+    Cards.Round.start_next_round
+    perform_round
+    Cards.Game.show_state
+
+    Cards.Round.start_next_round
+    perform_round
+    Cards.Game.show_state
+
+    Cards.Round.start_next_round
+    perform_round
+    Cards.Game.show_state
+
   end
 
   defp perform_round do

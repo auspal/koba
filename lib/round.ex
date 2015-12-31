@@ -10,14 +10,6 @@ defmodule Cards.Round do
 
   # Client API
 
-  def show_state(server) do
-    state = GenServer.call(server, :state)
-    IO.puts "          round: #{state.round}"
-    IO.puts "     kamons bet: #{state.bet_kamons}"
-    player_state = GenServer.call(state.current_player, :state)
-    IO.puts " current player: #{player_state.name}"
-  end
-
   def bet_kamon do
     GenServer.call(:round, :bet_kamon)
   end
