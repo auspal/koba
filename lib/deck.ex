@@ -23,6 +23,10 @@ defmodule Cards.Deck do
     GenServer.call(:deck, :show_kobayakawa)
   end
 
+  def reset_for_round do
+    GenServer.call(:deck, :reset_for_round)
+  end
+
   def get_state(deck) do
     GenServer.call(deck, :state)
   end
@@ -55,6 +59,14 @@ defmodule Cards.Deck do
   def handle_call(:replace_kobayakawa, _, deck) do
     [kobayakawa | remaining] = deck.cards
     {:reply, kobayakawa, %{deck | kobayakawa: kobayakawa, cards: remaining}}
+  end
+
+  def handle_call(:reset_for_round, _, deck) do
+    cards = for value <- 1..15, into: [] do
+      String.to_atom("card#{value}")
+    end
+    [kobayakawa | remaining] = Enum.shuffle(cards)
+    {:reply, :ok, %{kobayakawa: kobayakawa, cards: remaining}}
   end
 
   def handle_call(:state, _, deck) do

@@ -13,7 +13,7 @@ defmodule Cards.Game do
     game_state = GenServer.call(CardsGame, :state)
     deck_state = GenServer.call(:deck, :state)
 
-    IO.puts "Game State:"
+    IO.puts "\nGAME STATE:"
     Cards.Round.show_state(:round)
     deck_cards = Cards.Deck.show_deck
     IO.write "           deck: "
@@ -26,10 +26,6 @@ defmodule Cards.Game do
 
   def get_state do
     GenServer.call(CardsGame, :state)
-  end
-
-  def reset_deck do
-    Cards.Deck
   end
 
   # Server callbacks

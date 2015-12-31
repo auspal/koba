@@ -4,31 +4,33 @@ defmodule CardsTest do
 
   ExUnit.configure exclude: :pending
 
-  @tag :pending
-  test "personal testing" do
-    Enum.each(1..20, fn(x) -> IO.puts draw_or_replace end)
-  end
-  
-  test "game is configured" do
+  test "play game1" do
     deck_state = GenServer.call(:deck, :state)
     assert Enum.count(deck_state.cards) == 10
+
     perform_round
     Cards.Game.show_state
     deck_state = GenServer.call(:deck, :state)
     assert Enum.count(deck_state.cards) == 6
+
+    Enum.each(2..7, fn -> 
+      Cards.Round.start_next_round
+      perform_round
+      Cards.Game.show_state
+    end)
   end
 
-  def perform_round do
+  defp perform_round do
     game_state = Cards.Game.get_state
     Enum.each(game_state.players, &perform_draw_phase(&1))
     Enum.each(game_state.players, &perform_fight_phase(&1))
     Cards.Round.end_round
   end
 
-  def perform_draw_phase(player) do
+  defp perform_draw_phase(player) do
     case draw_or_replace do
       :draw_and_discard -> 
-        Cards.Player.draw(player, 1)
+        Cards.Player.draw(player, 1) 
         player_state = Cards.Player.get_state(player)
         Cards.Player.discard(player, choose_one_card(player_state.hand))
       :replace_kobayakawa ->
@@ -36,7 +38,7 @@ defmodule CardsTest do
     end
   end
 
-  def perform_fight_phase(player) do
+  defp perform_fight_phase(player) do
     case fight_or_pass do
       :fight -> Cards.Player.fight(player)
       :pass -> Cards.Player.pass(player)

@@ -1,6 +1,6 @@
 defmodule Cards.Round do
   use GenServer
-
+  
   @number_of_rounds 7
   @kamons_per_round [1,1,1,1,1,1,2]
 
@@ -9,11 +9,6 @@ defmodule Cards.Round do
   end
 
   # Client API
-
-  def begin_next_round do
-    GenServer.call(:round, :start_round)
-    GenServer.call(:round, :next_player)
-  end
 
   def show_state(server) do
     state = GenServer.call(server, :state)
@@ -35,18 +30,20 @@ defmodule Cards.Round do
     GenServer.call(:round, :end_round)
   end
 
+  def start_next_round do
+    GenServer.call(:round, :start_round)
+  end
+
   # Server callbacks
 
   def init({deck, players}) do
     [first_player | remaining_players] = players
-    {:ok, %{round: 1, bet_kamons: 0, deck: deck, players: players, current_player: first_player, remaining_players: players}}
-  end
-
-  def handle_call(:start_round, _, state) do
-    [current_player | remaining_players] = state.players
-    %{state | current_player: current_player, remaining_players: remaining_players}
-    state = %{state | round: state.round+1}
-    {:reply, :ok, state}
+    {:ok, %{     round: 1, 
+            bet_kamons: 0, 
+                  deck: deck, 
+               players: players, 
+        current_player: first_player, 
+     remaining_players: remaining_players}}
   end
 
   def handle_call(:next_player, _, state) do
@@ -63,11 +60,20 @@ defmodule Cards.Round do
     # score each player left in round (who decided to fight)
     betting_players = Enum.filter(state.players, fn player -> player_state = Cards.Player.get_state(player)
                                             player_state.kamon_bet > 0 end)
-    low_card_player = Enum.reduce(betting_players, nil, fn player, acc -> acc = low_card_player(player, acc) end)
+    low_card_player = Enum.reduce(betting_players, nil, fn player, acc -> low_card_player(player, acc) end)
     round_winner = round_winner(player_totals(betting_players, low_card_player))
     kamons_won = state.bet_kamons + Enum.at(@kamons_per_round, state.round-1)
     Cards.Player.take_kamons(round_winner, kamons_won)
     {:reply, :ok, state}
+  end
+
+  def handle_call(:start_round, _, state) do
+    Cards.Deck.reset_for_round
+    Enum.each(state.players, fn player -> Cards.Player.reset_for_round(player) 
+                                          Cards.Player.draw(player, 1) end)
+    [first_player | remaining_players] = state.players
+    {:reply, :ok, %{state | round: state.round+1, bet_kamons: 0, current_player: first_player, 
+                            remaining_players: remaining_players}}
   end
 
   def handle_call(:state, _, state) do
@@ -90,19 +96,17 @@ defmodule Cards.Round do
   end
 
   defp round_winner(player_totals) do
-    [{first_player, score}|_] = player_totals
-    IO.puts "first_player: #{first_player}"
-    IO.puts "score: #{score}"
-    {round_winner, score} = Enum.reduce(player_totals, nil, fn {player, total}, acc -> 
+    {round_winner, _} = Enum.reduce(player_totals, nil, fn {player, total}, acc -> 
                                             case acc do
                                               nil -> {player, total}
-                                              :true -> if total > elem(acc, 1), do: {player, total}
-                                            end
+                                              _ -> if total > elem(acc, 1) do 
+                                                    {player, total}
+                                                   else
+                                                    acc
+                                                   end
+                                             end
     end)
     round_winner
-  end
-
-  defp reward_round_winner(player, kamons_won) do
   end
 
   defp card_value_of_player(player) do
@@ -113,7 +117,7 @@ defmodule Cards.Round do
   defp low_card_player(player, acc) do
     case acc do
       nil -> player
-      :true -> if card_value_of_player(player) > card_value_of_player(acc) do 
+      _ -> if card_value_of_player(player) > card_value_of_player(acc) do 
                   player
                else
                  acc

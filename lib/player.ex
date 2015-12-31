@@ -19,7 +19,7 @@ defmodule Cards.Player do
   def show_private_state(player) do
     player_state = GenServer.call(player, :state)
     cards = GenServer.call(player, :show_hand)
-    IO.puts "#{player_state.name}:"
+    IO.puts "#{String.upcase(Atom.to_string(player_state.name))}:"
     IO.puts "    kamon: #{player_state.kamon}"
     IO.puts "kamon bet: #{player_state.kamon_bet}"
     IO.puts "     hand: #{card_values(cards)}"
@@ -59,6 +59,10 @@ defmodule Cards.Player do
 
   def take_kamons(player, kamon_count) do
     GenServer.call(player, {:take_kamons, kamon_count})
+  end
+
+  def reset_for_round(player) do
+    GenServer.call(player, :reset_for_round)
   end
 
   def get_state(player) do
@@ -105,6 +109,10 @@ defmodule Cards.Player do
 
   def handle_call({:finish_turn, true_false}, _, state) do
     {:reply, true_false, %{state | turn_finished: true_false}}
+  end
+
+  def handle_call(:reset_for_round, _, state) do
+    {:reply, :ok, %{state | kamon_bet: 0, hand: [], discard: nil, turn_finished: :false}}
   end
 
   defp card_values(nil), do: ""
