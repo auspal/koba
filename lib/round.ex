@@ -77,7 +77,7 @@ defmodule Cards.Round do
   end
 
   defp player_totals(betting_players, low_card_player) do
-    kobayakawa_value = Cards.Card.get_value(Koba.Deck.show_kobayakawa)
+    kobayakawa_value = Koba.Card.get_value(Koba.Deck.show_kobayakawa)
     Enum.reduce(betting_players, [], 
       fn player, acc -> player_score = case player do
                           low_card_player -> {player, card_value_of_player(player)+kobayakawa_value}
@@ -103,7 +103,7 @@ defmodule Cards.Round do
 
   defp card_value_of_player(player) do
     [player_card|_] = Cards.Player.show_hand(player)
-    Cards.Card.get_value(player_card)
+    Koba.Card.get_value(player_card)
   end
   
   defp low_card_player(player, acc) do

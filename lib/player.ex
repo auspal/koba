@@ -99,14 +99,14 @@ defmodule Cards.Player do
 
   def card_values(nil), do: ""
   def card_values(card) when is_atom(card) do 
-    Cards.Card.get_value(card)
+    Koba.Card.get_value(card)
   end
   def card_values(cards) when is_list(cards) do
-    Enum.map(cards, fn card -> Cards.Card.get_value(card) end)
+    Enum.map(cards, fn card -> Koba.Card.get_value(card) end)
     |> Enum.join(",")
   end
   def card_values(card) when is_pid(card) do
-    Cards.Card.get_value(card) |> Integer.to_string
+    Koba.Card.get_value(card) |> Integer.to_string
   end
 
 end

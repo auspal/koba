@@ -22,7 +22,7 @@ defmodule Koba.Game do
     IO.write "           deck: "
     IO.inspect(deck_cards)
     deck_state = GenServer.call(:deck, :state)
-    IO.puts "     kobayakawa: #{Cards.Card.get_value(deck_state.kobayakawa)}"
+    IO.puts "     kobayakawa: #{Koba.Card.get_value(deck_state.kobayakawa)}"
 
     # players state
     game_state = GenServer.call(:game, :state)

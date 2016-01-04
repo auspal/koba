@@ -1,4 +1,4 @@
-defmodule Cards.Card do
+defmodule Koba.Card do
 
   def start_link(value) do
     name = String.to_atom("card#{value}")

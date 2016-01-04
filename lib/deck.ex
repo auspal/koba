@@ -35,7 +35,7 @@ defmodule Koba.Deck do
 
   def init(:no_args) do
     cards = for value <- 1..15, into: [] do
-      {:ok, card} = Cards.Card.start_link(value)
+      {:ok, card} = Koba.Card.start_link(value)
       card
     end
     #:random.seed(:os.timestamp) # removed to provide consistent test values
@@ -74,7 +74,7 @@ defmodule Koba.Deck do
   end
 
   defp card_values(deck) do
-    Enum.map(deck, fn card -> Cards.Card.get_value(card) end)
+    Enum.map(deck, fn card -> Koba.Card.get_value(card) end)
   end
 
 end
