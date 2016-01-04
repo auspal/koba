@@ -1,19 +1,14 @@
-# Cards
+# Kobayakawa
 
-**TODO: Add description**
+[Kobayakawa](http://boardgamegeek.com/boardgame/142325/kobayakawa) is a Japanese micro-game that is has simple rules and 
+only a few components.  This app recreates a single game which lasts 7 rounds.
+
+**TODO:**
+- correctly determine new start player instead of always using player1 each round
+- handle situation where two players tie with highest total at the end of a round
+- eliminate player from game if they run out of kamons to bet with
+
 
 ## Installation
+clone project and run "mix test" to run though a simulated game of Kobayakawa
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
-  1. Add cards to your list of dependencies in `mix.exs`:
-
-        def deps do
-          [{:cards, "~> 0.0.1"}]
-        end
-
-  2. Ensure cards is started before your application:
-
-        def application do
-          [applications: [:cards]]
-        end
