@@ -1,6 +1,6 @@
-defmodule CardsTest do
+defmodule KaboTest do
   use ExUnit.Case, async: false
-  doctest Cards
+  doctest Koba
 
   ExUnit.configure exclude: :pending
 
@@ -13,30 +13,17 @@ defmodule CardsTest do
     deck_state = GenServer.call(:deck, :state)
     assert Enum.count(deck_state.cards) == 6
 
+    perform_rounds(6)
+  end
+
+  defp perform_rounds(0) do
+    IO.puts "\nGame Over..."
+  end
+  defp perform_rounds(x) do
     Cards.Round.start_next_round
     perform_round
     Cards.Game.show_state
-
-    Cards.Round.start_next_round
-    perform_round
-    Cards.Game.show_state
-
-    Cards.Round.start_next_round
-    perform_round
-    Cards.Game.show_state
-
-    Cards.Round.start_next_round
-    perform_round
-    Cards.Game.show_state
-
-    Cards.Round.start_next_round
-    perform_round
-    Cards.Game.show_state
-
-    Cards.Round.start_next_round
-    perform_round
-    Cards.Game.show_state
-
+    perform_rounds(x-1)
   end
 
   defp perform_round do

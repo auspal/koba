@@ -1,4 +1,4 @@
-defmodule Cards do
+defmodule Koba do
   use Application
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
