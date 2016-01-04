@@ -1,7 +1,9 @@
 # Kobayakawa
 
-[Kobayakawa](http://boardgamegeek.com/boardgame/142325/kobayakawa) is a Japanese micro-game that is has simple rules and 
-only a few components.  This app recreates a single game which lasts 7 rounds.
+[Kobayakawa](http://boardgamegeek.com/boardgame/142325/kobayakawa) 
+([rules](http://www.iellogames.com/downloads/Kobayakawa_rules.pdf)) is a Japanese micro-game 
+that is has simple rules and only a few components.  This app recreates a single game which 
+lasts 7 rounds.
 
 **TODO:**
 - correctly determine new start player instead of always using player1 each round
