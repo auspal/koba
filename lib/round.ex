@@ -1,4 +1,4 @@
-defmodule Cards.Round do
+defmodule Koba.Round do
   use GenServer
   
   @number_of_rounds 7
@@ -50,19 +50,19 @@ defmodule Cards.Round do
 
   def handle_call(:end_round, _from, state) do
     # score each player left in round (who decided to fight)
-    betting_players = Enum.filter(state.players, fn player -> player_state = Cards.Player.get_state(player)
+    betting_players = Enum.filter(state.players, fn player -> player_state = Koba.Player.get_state(player)
                                             player_state.kamon_bet > 0 end)
     low_card_player = Enum.reduce(betting_players, nil, fn player, acc -> low_card_player(player, acc) end)
     round_winner = round_winner(player_totals(betting_players, low_card_player))
     kamons_won = state.bet_kamons + Enum.at(@kamons_per_round, state.round-1)
-    Cards.Player.take_kamons(round_winner, kamons_won)
+    Koba.Player.take_kamons(round_winner, kamons_won)
     {:reply, :ok, state}
   end
 
   def handle_call(:start_round, _, state) do
     Koba.Deck.reset_for_round
-    Enum.each(state.players, fn player -> Cards.Player.reset_for_round(player) 
-                                          Cards.Player.draw(player, 1) end)
+    Enum.each(state.players, fn player -> Koba.Player.reset_for_round(player) 
+                                          Koba.Player.draw(player, 1) end)
     [first_player | remaining_players] = state.players
     {:reply, :ok, %{state | round: state.round+1, bet_kamons: 0, current_player: first_player, 
                             remaining_players: remaining_players}}
@@ -102,7 +102,7 @@ defmodule Cards.Round do
   end
 
   defp card_value_of_player(player) do
-    [player_card|_] = Cards.Player.show_hand(player)
+    [player_card|_] = Koba.Player.show_hand(player)
     Koba.Card.get_value(player_card)
   end
   

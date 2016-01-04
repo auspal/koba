@@ -1,4 +1,4 @@
-defmodule Cards.Player do
+defmodule Koba.Player do
   use GenServer
 
   def start_link(name) do
@@ -25,7 +25,7 @@ defmodule Cards.Player do
   end
 
   def fight(player) do
-    Cards.Round.bet_kamon
+    Koba.Round.bet_kamon
     GenServer.call(player, :bet_kamon)
     finish_turn(player, :true)
   end
@@ -36,7 +36,7 @@ defmodule Cards.Player do
 
   defp finish_turn(player, true_false) do
     GenServer.call(player, {:finish_turn, true_false})
-    Cards.Round.next_turn
+    Koba.Round.next_turn
   end
 
   def take_kamons(player, kamon_count) do

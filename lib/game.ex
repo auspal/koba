@@ -32,8 +32,8 @@ defmodule Koba.Game do
       IO.puts "#{String.upcase(Atom.to_string(player_state.name))}:"
       IO.puts "    kamon: #{player_state.kamon}"
       IO.puts "kamon bet: #{player_state.kamon_bet}"
-      IO.puts "     hand: #{Cards.Player.card_values(cards)}"
-      IO.puts "  discard: #{Cards.Player.card_values(player_state.discard)}"
+      IO.puts "     hand: #{Koba.Player.card_values(cards)}"
+      IO.puts "  discard: #{Koba.Player.card_values(player_state.discard)}"
     end
   end
 
@@ -46,11 +46,11 @@ defmodule Koba.Game do
   def init(:no_args) do
     {:ok, deck} = Koba.Deck.start_link
     players = for count <- 1..4 do 
-      {:ok, player} = Cards.Player.start_link("player#{count}")
-      Cards.Player.draw(player, 1)
+      {:ok, player} = Koba.Player.start_link("player#{count}")
+      Koba.Player.draw(player, 1)
       player
     end
-    {:ok, round} = Cards.Round.start_link(deck, players)
+    {:ok, round} = Koba.Round.start_link(deck, players)
     {:ok, %{deck: deck, players: players, round: round}}
   end
 
