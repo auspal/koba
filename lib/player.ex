@@ -20,7 +20,7 @@ defmodule Cards.Player do
   end
   
   def replace_kobayakawa(player) do
-    Cards.Deck.replace_kobayakawa(:deck)
+    Koba.Deck.replace_kobayakawa(:deck)
     finish_turn(player, :true)
   end
 
@@ -70,7 +70,7 @@ defmodule Cards.Player do
   end
 
   def handle_call({:draw, count}, _, state) do
-    cards = Cards.Deck.draw(:deck, count) 
+    cards = Koba.Deck.draw(:deck, count) 
     {:reply, cards, %{state | hand: cards ++ state.hand}}
   end
 

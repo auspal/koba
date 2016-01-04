@@ -9,7 +9,7 @@ defmodule KaboTest do
     assert Enum.count(deck_state.cards) == 10
 
     perform_round
-    Cards.Game.show_state
+    Koba.Game.show_state
     deck_state = GenServer.call(:deck, :state)
     assert Enum.count(deck_state.cards) == 6
 
@@ -22,12 +22,12 @@ defmodule KaboTest do
   defp perform_rounds(x) do
     Cards.Round.start_next_round
     perform_round
-    Cards.Game.show_state
+    Koba.Game.show_state
     perform_rounds(x-1)
   end
 
   defp perform_round do
-    game_state = Cards.Game.get_state
+    game_state = Koba.Game.get_state
     Enum.each(game_state.players, &perform_draw_phase(&1))
     Enum.each(game_state.players, &perform_fight_phase(&1))
     Cards.Round.end_round

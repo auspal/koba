@@ -60,7 +60,7 @@ defmodule Cards.Round do
   end
 
   def handle_call(:start_round, _, state) do
-    Cards.Deck.reset_for_round
+    Koba.Deck.reset_for_round
     Enum.each(state.players, fn player -> Cards.Player.reset_for_round(player) 
                                           Cards.Player.draw(player, 1) end)
     [first_player | remaining_players] = state.players
@@ -77,7 +77,7 @@ defmodule Cards.Round do
   end
 
   defp player_totals(betting_players, low_card_player) do
-    kobayakawa_value = Cards.Card.get_value(Cards.Deck.show_kobayakawa)
+    kobayakawa_value = Cards.Card.get_value(Koba.Deck.show_kobayakawa)
     Enum.reduce(betting_players, [], 
       fn player, acc -> player_score = case player do
                           low_card_player -> {player, card_value_of_player(player)+kobayakawa_value}

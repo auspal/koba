@@ -1,4 +1,4 @@
-defmodule Cards.Deck do
+defmodule Koba.Deck do
   use GenServer
 
   def start_link do

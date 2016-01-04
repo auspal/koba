@@ -1,10 +1,8 @@
-defmodule Cards.Game do
+defmodule Koba.Game do
   use GenServer
 
-  @registered_name CardsGame
-
   def start_link do
-    GenServer.start_link(__MODULE__, :no_args, [name: @registered_name])
+    GenServer.start_link(__MODULE__, :no_args, [name: :game])
   end
 
   # Client API
@@ -20,14 +18,14 @@ defmodule Cards.Game do
     IO.puts " current player: #{player_state.name}"
 
     # deck state
-    deck_cards = Cards.Deck.show_deck
+    deck_cards = Koba.Deck.show_deck
     IO.write "           deck: "
     IO.inspect(deck_cards)
     deck_state = GenServer.call(:deck, :state)
     IO.puts "     kobayakawa: #{Cards.Card.get_value(deck_state.kobayakawa)}"
 
     # players state
-    game_state = GenServer.call(CardsGame, :state)
+    game_state = GenServer.call(:game, :state)
     for player <- game_state.players do
       player_state = GenServer.call(player, :state)
       cards = GenServer.call(player, :show_hand)
@@ -40,13 +38,13 @@ defmodule Cards.Game do
   end
 
   def get_state do
-    GenServer.call(CardsGame, :state)
+    GenServer.call(:game, :state)
   end
 
   # Server callbacks
 
   def init(:no_args) do
-    {:ok, deck} = Cards.Deck.start_link
+    {:ok, deck} = Koba.Deck.start_link
     players = for count <- 1..4 do 
       {:ok, player} = Cards.Player.start_link("player#{count}")
       Cards.Player.draw(player, 1)
